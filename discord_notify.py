@@ -1,11 +1,15 @@
 import os
 import requests
 
-WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
+def send_discord_notification(message: str):
+    webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
+    if not webhook_url:
+        raise ValueError("DISCORD_WEBHOOK_URL not set in environment variables.")
 
-def send_notification(name, url, old_price, new_price):
-    message = {
-        "content": f"💸 **Price Drop Detected!**\n**{name}** just dropped from **${old_price}** to **${new_price}**.\n🔗 {url}"
+    data = {
+        "content": message
     }
-    response = requests.post(WEBHOOK_URL, json=message)
-    print("📩 Discord notification sent." if response.ok else f"❌ Discord error: {response.text}")
+
+    response = requests.post(webhook_url, json=data)
+    if response.status_code != 204:
+        raise Exception(f"Failed to send Discord notification: {response.status_code}, {response.text}")
