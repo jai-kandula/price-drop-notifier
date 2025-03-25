@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: price-drop-notifier
+    env: python
+    buildCommand: |
+      pip install -r requirements.txt
+      playwright install chromium
+    startCommand: uvicorn main:api --host 0.0.0.0 --port 10000
